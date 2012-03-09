@@ -7,7 +7,9 @@
   </parent>
 
   <groupId>com.cloudbees.jenkins.plugins</groupId>
-  <artifactId>file-leak-detector</artifactId>
+  <artifactId>cloudbees-file-leak-detector</artifactId>
+  <name>CloudBees File Leak Detector Plugin</name>
+  <description>Monitors and detects file handle leaks in Jenkins</description>
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
@@ -19,4 +21,31 @@
       <classifier>jar-with-dependencies</classifier>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:git:ssh://git@git.cloudbees.com/cloudbees/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@git.cloudbees.com/cloudbees/${project.artifactId}-plugin.git</developerConnection>
+  </scm>
+
+  <repositories>
+    <repository>
+      <id>repository-cloudbees.forge.cloudbees.com</id>
+      <url>https://repository-cloudbees.forge.cloudbees.com/private-release/</url>
+    </repository>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>http://repo.jenkins-ci.org/public/</url>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>repository-cloudbees.forge.cloudbees.com</id>
+      <url>dav:https://repository-cloudbees.forge.cloudbees.com/private-release/</url>
+    </repository>
+    <snapshotRepository>
+      <id>repository-cloudbees.forge.cloudbees.com</id>
+      <url>dav:https://repository-cloudbees.forge.cloudbees.com/private-snapshot/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
