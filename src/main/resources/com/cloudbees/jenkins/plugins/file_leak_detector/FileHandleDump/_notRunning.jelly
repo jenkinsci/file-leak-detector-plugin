@@ -1,0 +1,67 @@
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout">
+  <l:layout title="${%File handle dump}">
+    <l:main-panel>
+      <h1>File leak detector not installed</h1>
+
+      <p>
+        <tt>file-leak-detector.jar</tt> is not started yet. Click the "Activate" button to enable
+        it, then come back to this page to monitor the open file handles. If necessary, specify
+        some options from the table below.
+      </p>
+      <form action="activate" method="post">
+        <div>
+          Options: <input type="text" name="opts"/>
+          <input type="submit" value="Activate" />
+        </div>
+        <div style="margin-top:2em">
+          Options are comma separated key value pairs (value is optional) of the form
+          <tt>key1[=value1],key2[=value2],...</tt>
+        </div>
+        <table border="1">
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>trace</td>
+            <td>file name (optional)</td>
+            <td>
+              Trace every open/close calls into the specified file.
+              If no value is specified, the same information gets traced to stderr.
+              <b>This causes a considerable slow down of a system. Use with caution.</b>
+            </td>
+          </tr>
+          <tr>
+            <td>error</td>
+            <td>file name (required)</td>
+            <td>
+              Upon "too many open files" error, send the dump of the open files into the specified file.
+              Without this option, the dump will go to stderr.
+            </td>
+          </tr>
+          <tr>
+            <td>threshold</td>
+            <td>number (required)</td>
+            <td>
+              Once the total number of open files reach the specified number, trigger the "too many open files"
+              error handler to dump the list of open files. The target of the dump is controlled by the
+              <tt>error</tt> option above.
+            </td>
+          </tr>
+          <tr>
+            <td>strong</td>
+            <td>(none)</td>
+            <td>
+              Keep a strong reference to open file handles. Often file handle leaks are masked by garbage
+              collector as they close any unreachable open file handles. This makes it hard to discover
+              file handle leak problem early. With this option, this tool will force strong references to
+              prevent GC, allowing the problems to be discovered quickly. <b>Not recommended on production
+              systems</b>
+            </td>
+          </tr>
+        </table>
+      </form>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
