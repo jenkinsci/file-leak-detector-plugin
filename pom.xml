@@ -10,7 +10,7 @@
   <artifactId>cloudbees-file-leak-detector</artifactId>
   <name>CloudBees File Leak Detector Plugin</name>
   <description>Monitors and detects file handle leaks in Jenkins</description>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>hpi</packaging>
 
   <dependencies>
