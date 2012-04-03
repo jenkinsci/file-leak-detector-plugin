@@ -7,7 +7,7 @@
   </parent>
 
   <groupId>com.cloudbees.jenkins.plugins</groupId>
-  <artifactId>cloudbees-file-leak-detector</artifactId>
+  <artifactId>file-leak-detector</artifactId>
   <name>CloudBees File Leak Detector Plugin</name>
   <description>Monitors and detects file handle leaks in Jenkins</description>
   <version>1.1-SNAPSHOT</version>
