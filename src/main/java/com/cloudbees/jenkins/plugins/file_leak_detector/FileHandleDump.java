@@ -5,6 +5,9 @@ import hudson.Util;
 import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 import hudson.os.PosixAPI;
+import hudson.remoting.Which;
+import hudson.util.ArgumentListBuilder;
+import org.apache.commons.io.IOUtils;
 import org.kohsuke.file_leak_detector.Listener;
 import org.kohsuke.file_leak_detector.Main;
 import org.kohsuke.stapler.HttpResponse;
@@ -15,6 +18,8 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import javax.servlet.ServletException;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
@@ -68,10 +73,33 @@ public class FileHandleDump extends ManagementLink {
         if (loadListener()!=null)
             return HttpResponses.plainText("File leak detector is already activated");
 
-        Main main = new Main();
-        main.pid = Integer.toString(PosixAPI.get().getpid());
-        main.options = Util.fixEmpty(opts);
-        main.run();
+        // to activate, we need to use the JVM attach API, which internally uses JNI.
+        // so if someone else tries to do the same (by creating a new classloader that loads tools.jar),
+        // either we or they will fail. To avoid it, we'll launch a separate process and have that install
+        // the agent
+        ArgumentListBuilder args = new ArgumentListBuilder();
+        args.add(new File(System.getProperty("java.home"),"bin/java"))
+            .add("-jar")
+            .add(Which.jarFile(Main.class))
+            .add(PosixAPI.get().getpid())
+            .add(Util.fixEmpty(opts));
+
+        Process p = new ProcessBuilder(args.toCommandArray())
+                .redirectErrorStream(true)
+                .start();
+
+        p.getOutputStream().close();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        IOUtils.copy(p.getInputStream(),baos);
+        IOUtils.closeQuietly(p.getInputStream());
+        IOUtils.closeQuietly(p.getErrorStream());
+
+        int exitCode = p.waitFor();
+
+        if (exitCode!=0)
+            throw new Error("Failed to activate file leak detector: "+baos);
+
         return HttpResponses.plainText("Successfully activated file leak detector");
     }
 
