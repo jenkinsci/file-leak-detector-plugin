@@ -13,16 +13,13 @@ import org.kohsuke.file_leak_detector.Main;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import javax.servlet.ServletException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Logger;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -66,8 +63,8 @@ public class FileHandleDump extends ManagementLink {
     /**
      * Activates the file leak detector.
      */
+    @RequirePOST
     public HttpResponse doActivate(@QueryParameter String opts) throws Exception {
-        requirePOST();
         Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
 
         if (loadListener()!=null)
@@ -123,13 +120,5 @@ public class FileHandleDump extends ManagementLink {
             return null;
         }
     }
-    protected final void requirePOST() throws ServletException {
-        StaplerRequest req = Stapler.getCurrentRequest();
-        if (req==null)  return; // invoked outside the context of servlet
-        String method = req.getMethod();
-        if(!method.equalsIgnoreCase("POST"))
-            throw new ServletException("Must be POST, Can't be "+method);
-    }
 
-    private static final Logger LOGGER = Logger.getLogger(FileHandleDump.class.getName());
 }
