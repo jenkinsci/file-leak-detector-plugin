@@ -10,7 +10,7 @@
   <artifactId>file-leak-detector</artifactId>
   <name>CloudBees File Leak Detector Plugin</name>
   <description>Monitors and detects file handle leaks in Jenkins</description>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.6-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/File+Leak+Detector+Plugin</url>
 
@@ -18,7 +18,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>file-leak-detector</artifactId>
-      <version>1.6</version>
+      <version>1.10</version>
       <classifier>jar-with-dependencies</classifier>
       <exclusions>
         <exclusion>
@@ -28,6 +28,10 @@
         <exclusion>
           <groupId>org.kohsuke</groupId>
           <artifactId>asm3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.kohsuke</groupId>
+          <artifactId>asm5</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
