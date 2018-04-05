@@ -23,7 +23,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>file-leak-detector</artifactId>
-      <version>1.10</version>
+      <version>1.11</version>
       <classifier>jar-with-dependencies</classifier>
       <exclusions>
         <exclusion>
@@ -32,7 +32,7 @@
         </exclusion>
         <exclusion>
           <groupId>org.kohsuke</groupId>
-          <artifactId>asm5</artifactId>
+          <artifactId>asm6</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
