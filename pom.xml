@@ -12,7 +12,7 @@
   <description>Monitors and detects file handle leaks in Jenkins</description>
   <version>1.6-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/File+Leak+Detector+Plugin</url>
+  <url>https://wiki.jenkins.io/display/JENKINS/File+Leak+Detector+Plugin</url>
 
   <properties>
         <jenkins.version>2.7.3</jenkins.version>
