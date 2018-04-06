@@ -28,7 +28,6 @@ import com.gargoylesoftware.htmlunit.Page;
 import hudson.model.ManagementLink;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Pipe;
 import java.nio.channels.Selector;
