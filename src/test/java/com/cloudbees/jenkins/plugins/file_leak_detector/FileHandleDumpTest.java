@@ -73,9 +73,8 @@ public class FileHandleDumpTest {
     @Test
     public void detectPipeLeak() throws Exception {
         activateFileLeakDetector();
-        Pipe p = null;
+        Pipe p = Pipe.open();
         try {
-            p = Pipe.open();
             assertThat("There should be a pipe sink and source channel opened by this method", getOpenDescriptors(), allOf(
                 hasItem(allOf(
                         containsString("Pipe Sink Channel by thread:"),
@@ -85,10 +84,8 @@ public class FileHandleDumpTest {
                         containsString("FileHandleDumpTest.detectPipeLeak(")
                 ))));
         } finally {
-            if (p != null) {
-                p.sink().close();
-                p.source().close();
-            }
+            p.sink().close();
+            p.source().close();
         }
         assertThat("There should not be a pipe sink or source channel opened by this method", getOpenDescriptors(), not(anyOf(
                 hasItem(allOf(
