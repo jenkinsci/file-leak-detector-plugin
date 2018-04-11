@@ -78,7 +78,7 @@ public class FileHandleDump extends ManagementLink {
         args.add(new File(System.getProperty("java.home"),"bin/java"))
             .add("-jar")
             .add(Which.jarFile(Main.class))
-            .add(PosixAPI.get().getpid())
+            .add(PosixAPI.jnr().getpid())
             .add(Util.fixEmpty(opts));
 
         Process p = new ProcessBuilder(args.toCommandArray())
