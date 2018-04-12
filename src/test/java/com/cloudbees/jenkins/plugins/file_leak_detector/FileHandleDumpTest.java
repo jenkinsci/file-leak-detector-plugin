@@ -25,6 +25,7 @@
 package com.cloudbees.jenkins.plugins.file_leak_detector;
 
 import com.gargoylesoftware.htmlunit.Page;
+import hudson.Functions;
 import hudson.model.ManagementLink;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +34,7 @@ import java.nio.channels.Pipe;
 import java.nio.channels.Selector;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -72,6 +74,8 @@ public class FileHandleDumpTest {
 
     @Test
     public void detectPipeLeak() throws Exception {
+        // TODO: https://github.com/kohsuke/file-leak-detector/issues/36
+        Assume.assumeFalse("Pipes are not detected correctly on Windows", Functions.isWindows());
         activateFileLeakDetector();
         Pipe p = Pipe.open();
         try {
