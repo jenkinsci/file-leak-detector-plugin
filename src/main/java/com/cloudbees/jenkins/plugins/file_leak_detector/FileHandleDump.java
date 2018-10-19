@@ -81,21 +81,26 @@ public class FileHandleDump extends ManagementLink {
             .add(PosixAPI.jnr().getpid())
             .add(Util.fixEmpty(opts));
 
-        Process p = new ProcessBuilder(args.toCommandArray())
-                .redirectErrorStream(true)
-                .start();
+        Process p = new ProcessBuilder(args.toCommandArray()).start();
 
         p.getOutputStream().close();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        IOUtils.copy(p.getInputStream(),baos);
+        ByteArrayOutputStream baosOut = new ByteArrayOutputStream();
+        ByteArrayOutputStream baosErr = new ByteArrayOutputStream();
+        IOUtils.copy(p.getInputStream(),baosOut);
+        IOUtils.copy(p.getErrorStream(),baosErr);
+
         IOUtils.closeQuietly(p.getInputStream());
         IOUtils.closeQuietly(p.getErrorStream());
 
-        int exitCode = p.waitFor();
+        p.waitFor();
 
-        if (exitCode!=0)
-            throw new Error("Failed to activate file leak detector: "+baos);
+        if(baosErr.size() > 0) {
+            // As the real cause of the failure of the agent is lost and we cannot access it, we can only recommend to
+            // see the logs.
+            throw new Error("Failed to activate file leak detector.\nPerhaps wrong parameters.\n" +
+                    "See logs for more info.\nSpecifically, look for 'Agent failed to start!' or something related\n\n");
+        }
 
         return HttpResponses.plainText("Successfully activated file leak detector");
     }
