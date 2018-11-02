@@ -95,7 +95,10 @@ public class FileHandleDump extends ManagementLink {
         int exitCode = p.waitFor();
 
         if (exitCode!=0)
-            throw new Error("Failed to activate file leak detector: "+baos);
+            // As the real cause of the failure of the agent is lost and we cannot access it, we can only recommend to
+            // see the logs.
+            throw new Error("Failed to activate file leak detector.\nPerhaps wrong parameters.\n" +
+                    "See logs for more info.\nSpecifically, look for 'Agent failed to start!' or something related\n\n");
 
         return HttpResponses.plainText("Successfully activated file leak detector");
     }
