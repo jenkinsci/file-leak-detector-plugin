@@ -2,6 +2,7 @@ package com.cloudbees.jenkins.plugins.file_leak_detector;
 
 import hudson.Extension;
 import hudson.Util;
+import hudson.model.Failure;
 import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 import hudson.os.PosixAPI;
@@ -19,6 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
@@ -26,6 +29,8 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
  */
 @Extension
 public class FileHandleDump extends ManagementLink {
+    private static final Logger LOGGER = Logger.getLogger(FileHandleDump.class.getName());
+
     public String getIconFileName() {
         return "help.png";
     }
@@ -94,11 +99,27 @@ public class FileHandleDump extends ManagementLink {
 
         int exitCode = p.waitFor();
 
-        if (exitCode!=0)
-            // As the real cause of the failure of the agent is lost and we cannot access it, we can only recommend to
-            // see the logs.
-            throw new Error("Failed to activate file leak detector.\nPerhaps wrong parameters.\n" +
-                    "See logs for more info.\nSpecifically, look for 'Agent failed to start!' or something related\n\n");
+        if (exitCode!=0) {
+            /*
+            There are 2 high-level ways the process can fail:
+            1. The process can fail in org.kohsuke.file_leak_detector.Main#main. For example, this can happen if Jenkins
+               is running with a JRE instead of a full JDK and so the instrumentation API doesn't load. In this case,
+               the output of the process we created here contains the root cause of the failure. Because it is a
+               separate process, its output will _not_ be sent to Jenkins' logs/stdout/stderr by default, and so we
+               _must_ include its output in this error message or that information will be lost forever.
+            2. The process can fail in org.kohsuke.file_leak_detector.AgentMain#agentmain. For example, this can happen
+               if an invalid option is passed to the agent. In this case, the root cause of the issue will be printed
+               out to the stderr of the Jenkins process, and so the user needs to look there to find out  what went wrong.
+            We use Failure to omit the stack trace when it is shown to the user. Otherwise, the exception gets wrapped in
+            ServletException, and the message is duplicated, which is confusing when we have such a large message like this.
+            */
+            Exception e = new Failure("Failed to activate file leak detector. Perhaps the parameters were incorrect. " +
+                    "Look for 'Agent failed to start!' in stderr logs for more info. Additional logs:\n"+baos.toString(), true);
+            // Print the messsage to the logs so we have a timestamp and the error message in case we need it later.
+            // If we use a different exception type, this happens automatically, but we use Failure for reasons described above.
+            LOGGER.log(Level.WARNING, e.getMessage());
+            throw e;
+        }
 
         return HttpResponses.plainText("Successfully activated file leak detector");
     }
