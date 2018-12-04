@@ -114,7 +114,7 @@ public class FileHandleDump extends ManagementLink {
             ServletException, and the message is duplicated, which is confusing when we have such a large message like this.
             */
             Exception e = new Failure("Failed to activate file leak detector. Perhaps the parameters were incorrect. " +
-                    "Look for 'Agent failed to start!' in stderr logs for more info. Additional logs:\n"+baos.toString(), true);
+                    "Look for 'Agent failed to start!' in stderr logs for more info. Additional logs:\n"+baos, true);
             // Print the messsage to the logs so we have a timestamp and the error message in case we need it later.
             // If we use a different exception type, this happens automatically, but we use Failure for reasons described above.
             LOGGER.log(Level.WARNING, e.getMessage());
