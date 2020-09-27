@@ -1,5 +1,6 @@
 package com.cloudbees.jenkins.plugins.file_leak_detector;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Hudson;
@@ -64,6 +65,7 @@ public class FileHandleDump extends ManagementLink {
      * Activates the file leak detector.
      */
     @RequirePOST
+    @SuppressFBWarnings(value = "COMMAND_INJECTION", justification = "Requires ADMINISTER permission.")
     public HttpResponse doActivate(@QueryParameter String opts) throws Exception {
         Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
 
