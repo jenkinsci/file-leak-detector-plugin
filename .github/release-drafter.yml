@@ -1,0 +1,2 @@
+_extends: .github
+tag-template: file-leak-detector-$NEXT_MINOR_VERSION
