@@ -11,11 +11,18 @@
 
   <groupId>com.cloudbees.jenkins.plugins</groupId>
   <artifactId>file-leak-detector</artifactId>
-  <name>CloudBees File Leak Detector Plugin</name>
-  <description>Monitors and detects file handle leaks in Jenkins</description>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
+  <name>CloudBees File Leak Detector Plugin</name>
+  <description>Monitors and detects file handle leaks in Jenkins</description>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+
+  <scm>
+    <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
+    <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+    <tag>${scmTag}</tag>
+    <url>https://github.com/${gitHubRepo}</url>
+  </scm>
 
   <properties>
     <revision>1.8</revision>
@@ -31,8 +38,8 @@
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-2.303.x</artifactId>
         <version>1181.v04b_21d4b_0d6c</version>
-        <scope>import</scope>
         <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -77,13 +84,6 @@
     </dependency>
   </dependencies>
 
-  <scm>
-    <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
-    <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-    <url>https://github.com/${gitHubRepo}</url>
-    <tag>${scmTag}</tag>
-  </scm>
-
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
@@ -91,11 +91,10 @@
     </repository>
   </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.jenkins-ci.org</id>
-            <url>https://repo.jenkins-ci.org/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-</project>  
-
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+</project>
