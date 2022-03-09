@@ -31,14 +31,17 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 public class FileHandleDump extends ManagementLink {
     private static final Logger LOGGER = Logger.getLogger(FileHandleDump.class.getName());
 
+    @Override
     public String getIconFileName() {
         return "help.png";
     }
 
+    @Override
     public String getDisplayName() {
         return "Open File Handles";
     }
 
+    @Override
     public String getUrlName() {
         return "file-handles";
     }
