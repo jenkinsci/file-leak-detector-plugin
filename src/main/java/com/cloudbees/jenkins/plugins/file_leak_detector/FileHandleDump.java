@@ -3,11 +3,11 @@ package com.cloudbees.jenkins.plugins.file_leak_detector;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Failure;
-import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 import hudson.os.PosixAPI;
 import hudson.remoting.Which;
 import hudson.util.ArgumentListBuilder;
+import jenkins.model.Jenkins;
 import org.apache.commons.io.IOUtils;
 import org.kohsuke.file_leak_detector.Listener;
 import org.kohsuke.file_leak_detector.Main;
@@ -55,7 +55,7 @@ public class FileHandleDump extends ManagementLink {
      * Dumps the currently opened files.
      */
     public HttpResponse doIndex(StaplerResponse response) throws Exception {
-        Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
         Class<?> listener = loadListener();
 
@@ -73,10 +73,11 @@ public class FileHandleDump extends ManagementLink {
      */
     @RequirePOST
     public HttpResponse doActivate(@QueryParameter String opts) throws Exception {
-        Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
-        if (loadListener()!=null)
-            return HttpResponses.plainText("File leak detector is already activated");
+        if (loadListener() != null) {
+            return HttpResponses.text("File leak detector is already activated");
+        }
 
         // to activate, we need to use the JVM attach API, which internally uses JNI.
         // so if someone else tries to do the same (by creating a new classloader that loads tools.jar),
@@ -124,7 +125,7 @@ public class FileHandleDump extends ManagementLink {
             throw e;
         }
 
-        return HttpResponses.plainText("Successfully activated file leak detector");
+        return HttpResponses.text("Successfully activated file leak detector");
     }
 
     /**
@@ -141,7 +142,9 @@ public class FileHandleDump extends ManagementLink {
         try {
             Class<?> listener = ClassLoader.getSystemClassLoader().loadClass("org.kohsuke.file_leak_detector.Listener");
             boolean isAgentInstalled = (Boolean)listener.getMethod("isAgentInstalled").invoke(null);
-            if (!isAgentInstalled)  return null;
+            if (!isAgentInstalled) {
+                return null;
+            }
             return listener;
         } catch (ClassNotFoundException e) {
             return null;
