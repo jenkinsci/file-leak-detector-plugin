@@ -46,7 +46,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>file-leak-detector</artifactId>
-      <version>1.13</version>
+      <version>1.14</version>
       <classifier>jar-with-dependencies</classifier>
       <exclusions>
         <exclusion>
@@ -54,8 +54,24 @@
           <artifactId>args4j</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.kohsuke</groupId>
-          <artifactId>asm6</artifactId>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm-analysis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm-commons</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm-tree</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm-util</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
