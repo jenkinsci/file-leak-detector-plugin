@@ -11,7 +11,7 @@
 
   <groupId>com.cloudbees.jenkins.plugins</groupId>
   <artifactId>file-leak-detector</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.8</version>
   <packaging>hpi</packaging>
   <name>CloudBees File Leak Detector Plugin</name>
   <description>Monitors and detects file handle leaks in Jenkins</description>
@@ -20,7 +20,7 @@
   <scm>
     <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-    <tag>${scmTag}</tag>
+    <tag>file-leak-detector-1.8</tag>
     <url>https://github.com/${gitHubRepo}</url>
   </scm>
 
