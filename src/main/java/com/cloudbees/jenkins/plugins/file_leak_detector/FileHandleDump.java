@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.Util;
 import hudson.model.Failure;
 import hudson.model.ManagementLink;
-import hudson.os.PosixAPI;
 import hudson.remoting.Which;
 import hudson.util.ArgumentListBuilder;
 import jenkins.model.Jenkins;
@@ -87,7 +86,7 @@ public class FileHandleDump extends ManagementLink {
         args.add(new File(System.getProperty("java.home"),"bin/java"))
             .add("-jar")
             .add(Which.jarFile(Main.class))
-            .add(PosixAPI.jnr().getpid())
+            .add(ProcessHandle.current().pid())
             .add(Util.fixEmpty(opts));
 
         Process p = new ProcessBuilder(args.toCommandArray())

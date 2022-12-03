@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.51</version>
+    <version>4.52</version>
     <relativePath />
   </parent>
 
@@ -27,27 +27,11 @@
   <properties>
     <revision>1.11</revision>
     <changelist>-SNAPSHOT</changelist>
-    <jenkins.version>2.346.1</jenkins.version>
+    <jenkins.version>2.361.4</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.346.x</artifactId>
-        <version>1723.vcb_9fee52c9fc</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>jnr-posix-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>file-leak-detector</artifactId>
