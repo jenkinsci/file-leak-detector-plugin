@@ -53,6 +53,7 @@ public class FileHandleDump extends ManagementLink {
     /**
      * Dumps the currently opened files.
      */
+    @SuppressWarnings("lgtm[jenkins/csrf]")
     public HttpResponse doIndex(StaplerResponse response) throws Exception {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
