@@ -24,7 +24,7 @@
 
 package com.cloudbees.jenkins.plugins.file_leak_detector;
 
-import com.gargoylesoftware.htmlunit.Page;
+import org.htmlunit.Page;
 import hudson.Functions;
 import hudson.model.ManagementLink;
 import java.io.File;
