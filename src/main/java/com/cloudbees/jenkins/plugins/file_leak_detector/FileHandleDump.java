@@ -1,5 +1,6 @@
 package com.cloudbees.jenkins.plugins.file_leak_detector;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Failure;
@@ -48,6 +49,12 @@ public class FileHandleDump extends ManagementLink {
     @Override
     public String getDescription() {
         return "Monitor the current open file handles on the master JVM";
+    }
+
+    @NonNull
+    @Override
+    public Category getCategory() {
+        return Category.TROUBLESHOOTING;
     }
 
     /**
