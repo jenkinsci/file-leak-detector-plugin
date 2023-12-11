@@ -24,7 +24,13 @@
 
 package com.cloudbees.jenkins.plugins.file_leak_detector;
 
-import org.htmlunit.Page;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import hudson.Functions;
 import hudson.model.ManagementLink;
 import java.io.File;
@@ -34,19 +40,13 @@ import java.nio.channels.Pipe;
 import java.nio.channels.Selector;
 import java.util.Arrays;
 import java.util.List;
+import org.htmlunit.Page;
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
-
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FileHandleDumpTest {
 
@@ -61,15 +61,19 @@ public class FileHandleDumpTest {
         activateFileLeakDetector();
         File leakyFile = f.newFile("leaky-file");
         try (InputStream unused = new FileInputStream(leakyFile)) {
-            assertThat("There should be a file opened by this method", getOpenDescriptors(), hasItem(allOf(
-                    containsString(leakyFile.getPath() + " by thread:"),
-                    containsString("FileHandleDumpTest.detectFileLeak(")
-            )));
+            assertThat(
+                    "There should be a file opened by this method",
+                    getOpenDescriptors(),
+                    hasItem(allOf(
+                            containsString(leakyFile.getPath() + " by thread:"),
+                            containsString("FileHandleDumpTest.detectFileLeak("))));
         }
-        assertThat("There should not be a file opened by this method", getOpenDescriptors(), not(hasItem(allOf(
-                containsString(leakyFile.getPath() + " by thread:"),
-                containsString("FileHandleDumpTest.detectFileLeak(")
-        ))));
+        assertThat(
+                "There should not be a file opened by this method",
+                getOpenDescriptors(),
+                not(hasItem(allOf(
+                        containsString(leakyFile.getPath() + " by thread:"),
+                        containsString("FileHandleDumpTest.detectFileLeak(")))));
     }
 
     @Test
@@ -79,41 +83,49 @@ public class FileHandleDumpTest {
         activateFileLeakDetector();
         Pipe p = Pipe.open();
         try {
-            assertThat("There should be a pipe sink and source channel opened by this method", getOpenDescriptors(), allOf(
-                hasItem(allOf(
-                        containsString("Pipe Sink Channel by thread:"),
-                        containsString("FileHandleDumpTest.detectPipeLeak(")
-                )), hasItem(allOf(
-                        containsString("Pipe Source Channel by thread:"),
-                        containsString("FileHandleDumpTest.detectPipeLeak(")
-                ))));
+            assertThat(
+                    "There should be a pipe sink and source channel opened by this method",
+                    getOpenDescriptors(),
+                    allOf(
+                            hasItem(allOf(
+                                    containsString("Pipe Sink Channel by thread:"),
+                                    containsString("FileHandleDumpTest.detectPipeLeak("))),
+                            hasItem(allOf(
+                                    containsString("Pipe Source Channel by thread:"),
+                                    containsString("FileHandleDumpTest.detectPipeLeak(")))));
         } finally {
             p.sink().close();
             p.source().close();
         }
-        assertThat("There should not be a pipe sink or source channel opened by this method", getOpenDescriptors(), not(anyOf(
-                hasItem(allOf(
-                        containsString("Pipe Sink Channel by thread:"),
-                        containsString("FileHandleDumpTest.detectPipeLeak(")
-                )), hasItem(allOf(
-                        containsString("Pipe Source Channel by thread:"),
-                        containsString("FileHandleDumpTest.detectPipeLeak(")
-                )))));
+        assertThat(
+                "There should not be a pipe sink or source channel opened by this method",
+                getOpenDescriptors(),
+                not(anyOf(
+                        hasItem(allOf(
+                                containsString("Pipe Sink Channel by thread:"),
+                                containsString("FileHandleDumpTest.detectPipeLeak("))),
+                        hasItem(allOf(
+                                containsString("Pipe Source Channel by thread:"),
+                                containsString("FileHandleDumpTest.detectPipeLeak("))))));
     }
 
     @Test
     public void detectSelectorLeak() throws Exception {
         activateFileLeakDetector();
         try (Selector unused = Selector.open()) {
-            assertThat("There should be a selector opened by this method", getOpenDescriptors(), hasItem(allOf(
-                    containsString("selector by thread:"),
-                    containsString("FileHandleDumpTest.detectSelectorLeak(")
-            )));
+            assertThat(
+                    "There should be a selector opened by this method",
+                    getOpenDescriptors(),
+                    hasItem(allOf(
+                            containsString("selector by thread:"),
+                            containsString("FileHandleDumpTest.detectSelectorLeak("))));
         }
-        assertThat("There should not be a selector opened by this method", getOpenDescriptors(), not(hasItem(allOf(
-                containsString("selector by thread:"),
-                containsString("FileHandleDumpTest.detectSelectorLeak(")
-        ))));
+        assertThat(
+                "There should not be a selector opened by this method",
+                getOpenDescriptors(),
+                not(hasItem(allOf(
+                        containsString("selector by thread:"),
+                        containsString("FileHandleDumpTest.detectSelectorLeak(")))));
     }
 
     /**
@@ -140,8 +152,7 @@ public class FileHandleDumpTest {
         Page p = wc.goTo(fileHandleDump.getUrlName(), "text/plain");
         String descriptorDump = p.getWebResponse().getContentAsString();
         String[] descriptors = descriptorDump.split("#\\d+ ");
-         // First element is similar to "6 descriptors are open", so we exclude it.
+        // First element is similar to "6 descriptors are open", so we exclude it.
         return Arrays.asList(descriptors).subList(1, descriptors.length);
     }
-
 }

@@ -7,6 +7,12 @@ import hudson.model.Failure;
 import hudson.model.ManagementLink;
 import hudson.remoting.Which;
 import hudson.util.ArgumentListBuilder;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.IOUtils;
 import org.kohsuke.file_leak_detector.Listener;
@@ -15,13 +21,6 @@ import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerResponse;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
@@ -66,15 +65,15 @@ public class FileHandleDump extends ManagementLink {
 
         Class<?> listener = loadListener();
 
-        if (listener==null) {
-            return HttpResponses.forwardToView(this,"_notRunning");
+        if (listener == null) {
+            return HttpResponses.forwardToView(this, "_notRunning");
         }
 
         response.setContentType("text/plain;charset=UTF-8");
         listener.getMethod("dump", Writer.class).invoke(null, response.getWriter());
         return null;
     }
-    
+
     /**
      * Activates the file leak detector.
      */
@@ -91,11 +90,11 @@ public class FileHandleDump extends ManagementLink {
         // either we or they will fail. To avoid it, we'll launch a separate process and have that install
         // the agent
         ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add(new File(System.getProperty("java.home"),"bin/java"))
-            .add("-jar")
-            .add(Which.jarFile(Main.class))
-            .add(ProcessHandle.current().pid())
-            .add(Util.fixEmpty(opts));
+        args.add(new File(System.getProperty("java.home"), "bin/java"))
+                .add("-jar")
+                .add(Which.jarFile(Main.class))
+                .add(ProcessHandle.current().pid())
+                .add(Util.fixEmpty(opts));
 
         Process p = new ProcessBuilder(args.toCommandArray())
                 .redirectErrorStream(true)
@@ -104,13 +103,13 @@ public class FileHandleDump extends ManagementLink {
         p.getOutputStream().close();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        IOUtils.copy(p.getInputStream(),baos);
+        IOUtils.copy(p.getInputStream(), baos);
         IOUtils.closeQuietly(p.getInputStream());
         IOUtils.closeQuietly(p.getErrorStream());
 
         int exitCode = p.waitFor();
 
-        if (exitCode!=0) {
+        if (exitCode != 0) {
             /*
             There are 2 high-level ways the process can fail:
             1. The process can fail in org.kohsuke.file_leak_detector.Main#main. For example, this can happen if Jenkins
@@ -124,10 +123,14 @@ public class FileHandleDump extends ManagementLink {
             We use Failure to omit the stack trace when it is shown to the user. Otherwise, the exception gets wrapped in
             ServletException, and the message is duplicated, which is confusing when we have such a large message like this.
             */
-            Exception e = new Failure("Failed to activate file leak detector. Perhaps the parameters were incorrect. " +
-                    "Look for 'Agent failed to start!' in stderr logs for more info. Additional logs:\n"+baos, true);
+            Exception e = new Failure(
+                    "Failed to activate file leak detector. Perhaps the parameters were incorrect. "
+                            + "Look for 'Agent failed to start!' in stderr logs for more info. Additional logs:\n"
+                            + baos,
+                    true);
             // Print the messsage to the logs so we have a timestamp and the error message in case we need it later.
-            // If we use a different exception type, this happens automatically, but we use Failure for reasons described above.
+            // If we use a different exception type, this happens automatically, but we use Failure for reasons
+            // described above.
             LOGGER.log(Level.WARNING, e.getMessage());
             throw e;
         }
@@ -148,7 +151,8 @@ public class FileHandleDump extends ManagementLink {
     private Class<?> loadListener() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         try {
             Class<?> listener = ClassLoader.getSystemClassLoader().loadClass("org.kohsuke.file_leak_detector.Listener");
-            boolean isAgentInstalled = (Boolean)listener.getMethod("isAgentInstalled").invoke(null);
+            boolean isAgentInstalled =
+                    (Boolean) listener.getMethod("isAgentInstalled").invoke(null);
             if (!isAgentInstalled) {
                 return null;
             }
@@ -157,5 +161,4 @@ public class FileHandleDump extends ManagementLink {
             return null;
         }
     }
-
 }
