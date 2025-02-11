@@ -20,7 +20,7 @@ import org.kohsuke.file_leak_detector.Main;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
@@ -60,7 +60,7 @@ public class FileHandleDump extends ManagementLink {
      * Dumps the currently opened files.
      */
     @SuppressWarnings("lgtm[jenkins/csrf]")
-    public HttpResponse doIndex(StaplerResponse response) throws Exception {
+    public HttpResponse doIndex(StaplerResponse2 response) throws Exception {
         Jenkins.get().checkPermission(Jenkins.ADMINISTER);
 
         Class<?> listener = loadListener();
