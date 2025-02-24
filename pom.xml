@@ -38,7 +38,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>file-leak-detector</artifactId>
-      <version>1.18</version>
+      <version>1.19</version>
       <classifier>jar-with-dependencies</classifier>
       <exclusions>
         <exclusion>
