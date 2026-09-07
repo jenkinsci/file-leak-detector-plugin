@@ -39,9 +39,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.kohsuke</groupId>
+      <groupId>io.jenkins.tools</groupId>
       <artifactId>file-leak-detector</artifactId>
-      <version>1.19</version>
+      <version>1.21</version>
       <classifier>jar-with-dependencies</classifier>
       <exclusions>
         <exclusion>
